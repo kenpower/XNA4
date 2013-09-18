@@ -1,0 +1,24 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pacman", "pacman\pacman\pacman.csproj", "{56E6299F-4401-4E71-91EF-964E6990BFCD}"
+EndProject
+Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "pacmanContent", "pacman\pacmanContent\pacmanContent.contentproj", "{77636E18-FF33-4328-86D9-6A293FEEAA97}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{56E6299F-4401-4E71-91EF-964E6990BFCD}.Debug|x86.ActiveCfg = Debug|x86
+		{56E6299F-4401-4E71-91EF-964E6990BFCD}.Debug|x86.Build.0 = Debug|x86
+		{56E6299F-4401-4E71-91EF-964E6990BFCD}.Release|x86.ActiveCfg = Release|x86
+		{56E6299F-4401-4E71-91EF-964E6990BFCD}.Release|x86.Build.0 = Release|x86
+		{77636E18-FF33-4328-86D9-6A293FEEAA97}.Debug|x86.ActiveCfg = Debug|x86
+		{77636E18-FF33-4328-86D9-6A293FEEAA97}.Release|x86.ActiveCfg = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

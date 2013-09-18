@@ -1,0 +1,24 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual C# Express 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpriteTransform", "SpriteTransform\SpriteTransform\SpriteTransform.csproj", "{27DABADD-489B-4188-8344-79CA571E39A0}"
+EndProject
+Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "SpriteTransformContent", "SpriteTransform\SpriteTransformContent\SpriteTransformContent.contentproj", "{3ED0BAC8-A4B3-46FD-8446-5CCAF8A8E3DE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{27DABADD-489B-4188-8344-79CA571E39A0}.Debug|x86.ActiveCfg = Debug|x86
+		{27DABADD-489B-4188-8344-79CA571E39A0}.Debug|x86.Build.0 = Debug|x86
+		{27DABADD-489B-4188-8344-79CA571E39A0}.Release|x86.ActiveCfg = Release|x86
+		{27DABADD-489B-4188-8344-79CA571E39A0}.Release|x86.Build.0 = Release|x86
+		{3ED0BAC8-A4B3-46FD-8446-5CCAF8A8E3DE}.Debug|x86.ActiveCfg = Debug|x86
+		{3ED0BAC8-A4B3-46FD-8446-5CCAF8A8E3DE}.Release|x86.ActiveCfg = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
