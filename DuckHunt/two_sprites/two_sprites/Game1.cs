@@ -150,12 +150,12 @@ namespace two_sprites
         }
 
 
-        public void Init(Vector2 pos,TimeSpan tTL)
+        public void Init(Vector2 pos)
         {
             DateTime a = DateTime.Now;
 
             spritePosition = pos;
-            timeToLive = tTL;
+            timeToLive = new TimeSpan(0,0,0,0,500);
 
             spriteOrigin = new Vector2(myTexture.Width / 2, myTexture.Height / 2);
             Alive = true;
@@ -303,7 +303,7 @@ namespace two_sprites
                     {
                         sp[i].Alive = false;
                         Explosion e = new Explosion();
-                        e.Init(sp[i].spritePosition,new TimeSpan(0,0,0,0,500));
+                        e.Init(sp[i].spritePosition);
                         explosions.Add(e);
                     }
 
