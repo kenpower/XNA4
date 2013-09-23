@@ -22,14 +22,16 @@ namespace two_sprites
         Vector2 spriteSpeed = new Vector2(100, 100); // pixels per second
         Vector2 spriteOrigin;
         float radius;
-        float angle;
+        float angle, targetAngle;
         SpriteEffects flip;
         
      
         public Vector2 SpriteSpeed
         {
             get { return spriteSpeed; }
-            set { spriteSpeed = value; }
+            set { spriteSpeed = value;
+                  targetAngle=angle = (float)Math.Atan2(spriteSpeed.Y, spriteSpeed.X);
+            }
         }
 
         bool alive;
@@ -98,7 +100,8 @@ namespace two_sprites
             //}
 
 
-            angle = (float)Math.Atan2(spriteSpeed.Y , spriteSpeed.X);
+            targetAngle = (float)Math.Atan2(spriteSpeed.Y , spriteSpeed.X);
+            angle += (targetAngle - angle) * 0.1f;
             flip = SpriteEffects.FlipHorizontally;
             //flip = SpriteEffects.None;
             if (spriteSpeed.X < 0)
@@ -203,8 +206,8 @@ namespace two_sprites
         SpriteBatch spriteBatch;
 
         // This is a texture we can render.  
-
-        MySprite[] sp=new MySprite[100];
+        static int NUM_DUCKS = 1000;
+        MySprite[] sp = new MySprite[NUM_DUCKS];
 
 
         MouseState oldMouseState;
@@ -220,7 +223,8 @@ namespace two_sprites
             // Create a new SpriteBatch, which can be used to draw textures.      
             spriteBatch = new SpriteBatch(GraphicsDevice);
             Random r = new Random();
-            for(int i=0;i<100;i++){
+            for (int i = 0; i < NUM_DUCKS; i++)
+            {
                 sp[i]=new MySprite();
                 sp[i].LoadContent(Content,"duck");
                 int MaxX = graphics.GraphicsDevice.Viewport.Width;
@@ -281,7 +285,7 @@ namespace two_sprites
                 this.Exit();
 
             // TODO: Add your update logic here
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < NUM_DUCKS; i++)
             {
                 sp[i].UpdateSprite(gameTime, graphics);
             }
@@ -297,7 +301,7 @@ namespace two_sprites
                 //check for collisions
 
                 Vector2 mp = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
-                for (int i = 0; i < 100; i++)
+                for (int i = 0; i < NUM_DUCKS; i++)
                 {
                     if (sp[i].PointInSprite(mp) && sp[i].Alive)
                     {
@@ -311,7 +315,7 @@ namespace two_sprites
             }
             aliveCount = 0;
             // count alive ducks
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < NUM_DUCKS; i++)
             {
                 if (sp[i].Alive)
                 {
@@ -330,8 +334,8 @@ namespace two_sprites
         protected override void Draw(GameTime gameTime)
         {
             graphics.GraphicsDevice.Clear(Color.CornflowerBlue);        // Draw the sprite.
-            
-            for (int i = 0; i < 100; i++)
+
+            for (int i = 0; i < NUM_DUCKS; i++)
             {
                 sp[i].Draw(gameTime, spriteBatch);
             }
