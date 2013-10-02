@@ -21,7 +21,8 @@ namespace SpriteTransform
 
         Texture2D invader;
         Vector2 pos, position2;
-        bool redEye=false;
+        //Vector2 origin;
+        bool redEye;
 
 
 
@@ -58,7 +59,8 @@ namespace SpriteTransform
             spriteBatch = new SpriteBatch(GraphicsDevice);
             IsMouseVisible = true;
 
-            invader = Content.Load<Texture2D>("space-invader-sml");
+            invader = Content.Load<Texture2D>("space-invader");
+            //origin = new Vector2(invader.Width / 2, invader.Height / 2);
             
 
             // TODO: use this.Content to load your game content here
@@ -112,58 +114,24 @@ namespace SpriteTransform
 
             // TODO: Add your drawing code here
 
-            Matrix transform=Matrix.Identity;
-            Matrix t= Matrix.CreateTranslation(300, 125,0);
-            Matrix t2 = Matrix.CreateTranslation(-300, -125, 0);
-            
             rotation -= 0.03f;
-            Matrix r = Matrix.CreateRotationZ(rotation);
+            Vector2 origin = new Vector2(invader.Width / 2, invader.Height / 2);
+
+            //spin in place
+            Matrix alienTransform =
+                Matrix.CreateRotationZ(rotation) *
+                Matrix.CreateTranslation(200, 200, 0);
+            
+            spriteBatch.Begin(SpriteSortMode.BackToFront, 
+                null, null, null, null, null, 
+                alienTransform);
 
 
-            //alienTransform = Matrix.CreateRotationZ(1);
-            //alienTransform = Matrix.CreateRotationZ(rotation) * Matrix.CreateTranslation(200, 200, 0);
-            //alienTransform =  Matrix.CreateTranslation(200, 200, 0)*Matrix.CreateRotationZ(rotation) ;
-            //alienTransform = Matrix.Identity;
-            Vector3 centre=new Vector3(graphics.GraphicsDevice.Viewport.Width / 2, graphics.GraphicsDevice.Viewport.Height/ 2,0);
-            alienTransform =Matrix.CreateTranslation(50, 0, 0) *
-                            Matrix.CreateRotationZ(4*rotation) * 
-                            
-                            Matrix.CreateRotationZ(-rotation)* 
-                            Matrix.CreateTranslation(100, 0, 0) *
-                            Matrix.CreateRotationZ(rotation)*
-                            Matrix.CreateTranslation(centre);
-
-
-
-
-
-
-            //transform = t2*r*t;
-            //spriteBatch.Begin(SpriteSortMode.BackToFront, null, null, null, null, null, transform);
-
-            //int xSpace = 60;
-            //int ySpace = 50;
-            //for (int x = 0; x < 10; x++)
-            //{
-
-            //    for (int y = 0; y < 5; y++)
-            //    {
-            //        spriteBatch.Draw(invader, new Vector2(x * xSpace, y * ySpace), Color.White);
-            //    }
-            //}
-            //spriteBatch.End();
-
-
-            Color c=Color.White;
-
-            if (redEye == true)
-            {   
-                c=Color.Red;
-            }
-            spriteBatch.Begin(SpriteSortMode.BackToFront, null, null, null, null, null, alienTransform);
-
-
-            spriteBatch.Draw(invader, Vector2.Zero, null,c, 0, new Vector2(invader.Width/2, invader.Height/2), 1, SpriteEffects.None, 0);
+            spriteBatch.Draw(invader, 
+                Vector2.Zero, //position
+                null,Color.White, 0, 
+                origin,// 
+                1, SpriteEffects.None, 0);
 
             spriteBatch.End();
 
@@ -171,3 +139,12 @@ namespace SpriteTransform
         }
     }
 }
+
+//Vector3 centre=new Vector3(graphics.GraphicsDevice.Viewport.Width / 2, graphics.GraphicsDevice.Viewport.Height/ 2,0);
+//alienTransform =Matrix.CreateTranslation(50, 0, 0) *
+//                Matrix.CreateRotationZ(4*rotation) * 
+
+//                Matrix.CreateRotationZ(-rotation)* 
+//                Matrix.CreateTranslation(100, 0, 0) *
+//                Matrix.CreateRotationZ(rotation)*
+//                Matrix.CreateTranslation(centre);

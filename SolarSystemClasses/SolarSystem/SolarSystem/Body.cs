@@ -48,11 +48,15 @@ namespace SolarSystem
 
         public void Update(GameTime gameTime, Matrix parentTransform, float simSpeed)
         {
-            Double days = gameTime.TotalGameTime.TotalMilliseconds / simSpeed;
+            Double secondsElapsed = gameTime.TotalGameTime.TotalSeconds;
 
             Single rotation=0;
-            if(yearLength>0)
-                 rotation = (Single)(days / yearLength) * MathHelper.TwoPi;
+            Single secondsPerYear = yearLength * 365 * 24 * 60 * 60;
+            if (yearLength > 0)
+            {
+                rotation = (Single)(secondsElapsed / secondsPerYear) * MathHelper.TwoPi;
+                rotation *= simSpeed*1000000;
+            }
 
 
             Transform = Matrix.CreateTranslation(orbitRadius, 0, 0) * 

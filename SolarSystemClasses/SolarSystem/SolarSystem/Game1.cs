@@ -21,7 +21,7 @@ namespace SolarSystem
 
         Body sun, earth, moon, mars, marsMoon, marsMoon2;
 
-        Single simulationSpeed = 10;//milliseconds per day
+        Single simulationSpeed;// times faster than real-time
 
 
         public Game1()
@@ -110,14 +110,14 @@ namespace SolarSystem
 
             // TODO: Add your update logic here
 
-            Single maxSimulationSpeed = 1000;
-            Single minSimulationSpeed = 5;
+            Single maxSimulationSpeed = 10000;
+            Single minSimulationSpeed = 100;
             int maxX = this.graphics.GraphicsDevice.Viewport.Width;
 
             int x=Mouse.GetState().X;
 
 
-            simulationSpeed = minSimulationSpeed+ maxSimulationSpeed * (float)x / (float)maxX;
+            simulationSpeed = minSimulationSpeed+ maxSimulationSpeed * Math.Abs((float)x / (float)maxX);
 
 
             Matrix screenCentre = Matrix.CreateTranslation(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2,0);
