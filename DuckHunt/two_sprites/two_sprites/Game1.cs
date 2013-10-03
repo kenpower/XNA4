@@ -115,7 +115,7 @@ namespace two_sprites
         {
             if(!alive) return;
 
-            Matrix matrix = Matrix.CreateRotationZ(angle) * Matrix.CreateTranslation(spritePosition.X, spritePosition.Y, 0);
+            Matrix matrix = Matrix.CreateRotationZ(targetAngle) * Matrix.CreateTranslation(spritePosition.X, spritePosition.Y, 0);
             spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend, null, null, null, null, matrix);
             spriteBatch.Draw(myTexture, Vector2.Zero, null, Color.White, 0, spriteOrigin, 1, flip, 1);
             spriteBatch.End();
@@ -206,7 +206,7 @@ namespace two_sprites
         SpriteBatch spriteBatch;
 
         // This is a texture we can render.  
-        static int NUM_DUCKS = 1000;
+        static int NUM_DUCKS = 10;
         MySprite[] sp = new MySprite[NUM_DUCKS];
 
 
