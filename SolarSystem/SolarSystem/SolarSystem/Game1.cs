@@ -33,8 +33,8 @@ namespace SolarSystem
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             this.graphics.PreferredBackBufferWidth = 1024;
-            this.graphics.PreferredBackBufferHeight = 1280;
-            this.graphics.IsFullScreen = true;
+            this.graphics.PreferredBackBufferHeight = 1024;
+            //this.graphics.IsFullScreen = true;
             IsMouseVisible = true;
         }
 

@@ -24,14 +24,15 @@ namespace RobotArm
         Vector3 bodyJointPos, upperarmJointPos, lowerArmJointPos;
         float upperArmAngle, lowerArmAngle, handAngle = -MathHelper.PiOver2;
         Matrix upperArmOrigin, lowerArmOrigin, handOrigin;
+        Matrix camera;
 
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            graphics.PreferredBackBufferHeight = 800;
-            graphics.PreferredBackBufferWidth = 1200;
+            graphics.PreferredBackBufferHeight = 400;
+            graphics.PreferredBackBufferWidth = 600;
 
         }
 
@@ -57,25 +58,27 @@ namespace RobotArm
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            body=Content.Load<Texture2D>("bodyx");
-            upperArm=Content.Load<Texture2D>("lowerarmx");
-            lowerArm=Content.Load<Texture2D>("upperarmx");
+            body=Content.Load<Texture2D>("body");
+            upperArm=Content.Load<Texture2D>("lowerarm");
+            lowerArm=Content.Load<Texture2D>("upperarm");
             hand=Content.Load<Texture2D>("hand");
 
 
             bodyJointPos=new Vector3(452,209,0);
 
+            // see the bodyx,lowerarmx, upperarmx sprites to see what the values below represent
+            upperArmOrigin = Matrix.CreateTranslation(-27,-403,-0);// upper arm rotates around this point, without this the upper arm rotates around top-left of sprite
+            upperarmJointPos = new Vector3(376, 87, 0); //this is the position within the sprite that the lower arm is connected to
 
-            upperArmOrigin = Matrix.CreateTranslation(-27,-403,-0);
-            upperarmJointPos = new Vector3(376, 87, 0) + upperArmOrigin.Translation;
 
-            
-            lowerArmOrigin = Matrix.CreateTranslation(-33,-88,0);
-            lowerArmJointPos = new Vector3(27, 428, 0) + lowerArmOrigin.Translation;
+            lowerArmOrigin = Matrix.CreateTranslation(-33, -88, 0);// lower arm rotates around this point
+            lowerArmJointPos = new Vector3(27, 428, 0);
 
-            handOrigin = Matrix.CreateTranslation(-167, -71,0);
+            handOrigin = Matrix.CreateTranslation(-167, -71, 0);// hand  rotates around this point
 
             bodyPos = new Vector3(100, 200,0);
+
+            camera = Matrix.CreateScale(0.5f); //zoom out
             // TODO: use this.Content to load your game content here
         }
 
@@ -154,59 +157,32 @@ namespace RobotArm
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            Matrix bodyTransform = Matrix.CreateTranslation(bodyPos) * Matrix.CreateScale(0.5f); ;
-            Matrix upperArmTransform =Matrix.CreateRotationZ(upperArmAngle)* Matrix.CreateTranslation(bodyJointPos)*  bodyTransform;
-            Matrix lowerArmTransform = Matrix.CreateRotationZ(lowerArmAngle) * Matrix.CreateTranslation(upperarmJointPos) * upperArmTransform;
-            Matrix handTransform = Matrix.CreateRotationZ(handAngle) * Matrix.CreateTranslation(lowerArmJointPos) * lowerArmTransform;
+           
+            Matrix bodyTransform = Matrix.CreateTranslation(bodyPos)  * camera;
+            Matrix upperArmTransform = upperArmOrigin * Matrix.CreateRotationZ(upperArmAngle) * Matrix.CreateTranslation(bodyJointPos) * bodyTransform;
+            Matrix lowerArmTransform = lowerArmOrigin * Matrix.CreateRotationZ(lowerArmAngle) * Matrix.CreateTranslation(upperarmJointPos) * upperArmTransform;
+            Matrix handTransform = handOrigin * Matrix.CreateRotationZ(handAngle) * Matrix.CreateTranslation(lowerArmJointPos) * lowerArmTransform;
 
-            Matrix handTransform2 = Matrix.CreateScale(1,-1,1)*Matrix.CreateRotationZ(handAngle) * Matrix.CreateTranslation(lowerArmJointPos) * lowerArmTransform;
-            Matrix m = Matrix.CreateScale(1, -1, 1);
-
+      
             // TODO: Add your drawing code here
             spriteBatch.Begin(SpriteSortMode.BackToFront, null, null, null, null, null, bodyTransform);
             spriteBatch.Draw(body, Vector2.Zero, Color.White);
             spriteBatch.End();
 
-            spriteBatch.Begin(SpriteSortMode.BackToFront, null, null, null, null, null, upperArmOrigin*upperArmTransform);
+            spriteBatch.Begin(SpriteSortMode.BackToFront, null, null, null, null, null, upperArmTransform);
             spriteBatch.Draw(upperArm, Vector2.Zero, Color.White);
             spriteBatch.End();
 
-            spriteBatch.Begin(SpriteSortMode.BackToFront, null, null, null, null, null, lowerArmOrigin*lowerArmTransform);
+            spriteBatch.Begin(SpriteSortMode.BackToFront, null, null, null, null, null, lowerArmTransform);
             spriteBatch.Draw(lowerArm, Vector2.Zero,  Color.White);
             spriteBatch.End();
 
-            spriteBatch.Begin(SpriteSortMode.BackToFront, null, null, null, null, null, handOrigin*handTransform);
+            spriteBatch.Begin(SpriteSortMode.BackToFront, null, null, null, null, null, handTransform);
             spriteBatch.Draw(hand, Vector2.Zero,  Color.White);
             spriteBatch.End();
 
-            spriteBatch.Begin(SpriteSortMode.BackToFront, null, null, null, null, null, handOrigin*handTransform2);
-            spriteBatch.Draw(hand, Vector2.Zero,  Color.White);
-            spriteBatch.End();
+  
 
-            
-            //this code uses draw/rotate to rotate the sprites, unstidafctory as the lower sprotes don't inherit the parent sprites rotation
-            //Matrix bodyTransform = Matrix.CreateTranslation(bodyPos.X, bodyPos.Y, 0);
-            //Matrix upperArmTransform = Matrix.CreateTranslation(bodyJointPos.X, bodyJointPos.Y, 0) * bodyTransform;
-            //Matrix lowerArmTransform = Matrix.CreateTranslation(upperarmJointPos.X, upperarmJointPos.Y, 0) * upperArmTransform;
-            //Matrix handTransform = Matrix.CreateTranslation(lowerArmJointPos.X, lowerArmJointPos.Y, 0) * lowerArmTransform;
-
-
-            //// TODO: Add your drawing code here
-            //spriteBatch.Begin(SpriteSortMode.BackToFront, null, null, null, null, null, bodyTransform);
-            //spriteBatch.Draw(body, Vector2.Zero, Color.White);
-            //spriteBatch.End();
-
-            //spriteBatch.Begin(SpriteSortMode.BackToFront, null, null, null, null, null, upperArmTransform);
-            //spriteBatch.Draw(upperArm, Vector2.Zero, null, Color.White, upperArmAngle, upperArmOrigin, 1, SpriteEffects.None, 0);
-            //spriteBatch.End();
-
-            //spriteBatch.Begin(SpriteSortMode.BackToFront, null, null, null, null, null, lowerArmTransform);
-            //spriteBatch.Draw(lowerArm, Vector2.Zero, null, Color.White, lowerArmAngle, lowerArmOrigin, 1, SpriteEffects.None, 0);
-            //spriteBatch.End();
-
-            //spriteBatch.Begin(SpriteSortMode.BackToFront, null, null, null, null, null, handTransform);
-            //spriteBatch.Draw(hand, Vector2.Zero, null, Color.White, handAngle, handOrigin, 1, SpriteEffects.None, 0);
-            //spriteBatch.End();
 
 
 
