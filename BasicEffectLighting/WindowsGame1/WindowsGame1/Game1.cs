@@ -116,6 +116,7 @@ namespace WindowsGame1
                     effect.World = worldCone;
                     effect.Projection = projection;
                     effect.View = view;
+                    //effect.DirectionalLight0.Direction = new Vector3(-1, 0, 0);
                 }
                 mesh.Draw();
 

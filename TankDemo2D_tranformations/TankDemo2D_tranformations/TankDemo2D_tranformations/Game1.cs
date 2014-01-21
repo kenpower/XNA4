@@ -18,29 +18,31 @@ namespace TankDemo2D_tranformations
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        Texture2D tank, turret,terrain;
 
-        Vector3 terrain_origin;
-   
-        Vector2 tank_pos=new Vector2();
-        Vector2 tank_origin = new Vector2();
-        int tank_radius;
-        
-        Vector2 turret_origin = new Vector2();
+        Texture2D terrain;
+        Texture2D bullet;
+
         Vector2 screen_centre;
 
-        Vector2 camera_pos = new Vector2();
+        Vector3 camera_pos = new Vector3();
         float camera_zoom = 1.0f;
-        
-        
-        float speed = 3;
+        KeyboardState oldkbs;
 
-        float turn_speed = 0.03f;
-        float tank_rotation = 0.0f;
-        
-        float turret_rotation = 0.0f;
+        Vector3 terrain_origin;
+       
 
         float camera_speed = 1;
+
+        Rectangle game_bounds;
+        Tank tank = new Tank();
+        Turret turret = new Turret();
+
+
+
+        static int num_enemies=10;
+        Enemy[] enemies = new Enemy[num_enemies];
+
+        List<Bullet> bulletList = new List<Bullet>();
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -58,6 +60,17 @@ namespace TankDemo2D_tranformations
             // TODO: Add your initialization logic here
 
             base.Initialize();
+            
+            Random r = new Random();
+            foreach (Enemy e in enemies)
+            {
+                e.SpriteBatch = spriteBatch;
+                e.Init(r, game_bounds);
+
+            }
+            
+            oldkbs = Keyboard.GetState();
+           
         }
 
         /// <summary>
@@ -68,18 +81,40 @@ namespace TankDemo2D_tranformations
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-
-            tank = Content.Load<Texture2D>("tank_body");
-            turret = Content.Load<Texture2D>("turret");
+           
             terrain = Content.Load<Texture2D>("terrain");
 
 
-            tank_origin = new Vector2(-tank.Bounds.Center.X, -tank.Bounds.Center.Y);
-            turret_origin = new Vector2(-18, -turret.Bounds.Center.Y);
             screen_centre = new Vector2(GraphicsDevice.Viewport.Bounds.Center.X,GraphicsDevice.Viewport.Bounds.Center.Y);
             terrain_origin = new Vector3(-terrain.Bounds.Center.X, -terrain.Bounds.Center.Y,0);
 
-            tank_radius = tank.Bounds.Width / 2;
+            tank.Image = Content.Load<Texture2D>("tank_body");
+            tank.SpriteBatch = spriteBatch;
+            turret.Image = Content.Load<Texture2D>("turret");
+            turret.SpriteBatch = spriteBatch;
+
+            bullet= Content.Load<Texture2D>("bullet");
+           
+
+            tank.turret = turret;
+            turret.tank = tank;
+
+            game_bounds = terrain.Bounds;
+            game_bounds.Offset((int)terrain_origin.X,(int)terrain_origin.Y);
+
+            Texture2D enemyB = Content.Load<Texture2D>("enemy_body");
+            for (int i = 0; i < num_enemies; i++)
+            {
+                enemies[i] = new Enemy();
+                enemies[i].SpriteBatch = spriteBatch;
+                enemies[i].Image = enemyB;
+
+            }
+
+            //Bullet.sprite = Content.Load<Texture2D>("bullet");
+
+            //Bullet.spriteOrigin = new Vector2(-Bullet.sprite.Bounds.Center.X, -Bullet.sprite.Bounds.Center.Y);
+            
             // TODO: use this.Content to load your game content here
         }
 
@@ -106,57 +141,34 @@ namespace TankDemo2D_tranformations
             // TODO: Add your update logic here
             KeyboardState kbs=Keyboard.GetState();
 
-            Vector2 tank_dir = new Vector2(1, 0);
-            Matrix rot = Matrix.CreateRotationZ(tank_rotation);
-            tank_dir=Vector2.Transform(tank_dir, rot);
-            //Vector2 old_pos = tank_pos;
 
-            if (kbs.IsKeyDown(Keys.Up))
+
+
+
+            tank.Update(gameTime, game_bounds);
+
+            turret.Update(gameTime, game_bounds);
+
+            foreach (Enemy e in enemies)
             {
-                tank_pos = tank_pos + tank_dir * speed;
+                e.Update(gameTime, game_bounds,tank.position);
+
             }
 
-            if (kbs.IsKeyDown(Keys.Down))
+            foreach (Bullet b in bulletList)
             {
-                tank_pos = tank_pos - tank_dir * speed;
+                b.Update(gameTime, game_bounds);
+            
             }
-            Rectangle game_bounds=terrain.Bounds;
-            game_bounds.Offset((int)terrain_origin.X,(int)terrain_origin.Y);
-            game_bounds.Inflate(-tank_radius, -tank_radius);
-            //Point pos=new Point((int)tank_pos.X,(int)tank_pos.Y);
-            
-            
-            //if (!game_bounds.Contains(pos))
-            //{
-            //    tank_pos = old_pos;
-            //}
 
-            tank_pos.X = MathHelper.Clamp(tank_pos.X, game_bounds.Left, game_bounds.Right);
-            tank_pos.Y = MathHelper.Clamp(tank_pos.Y, game_bounds.Top, game_bounds.Bottom);
+            if (kbs.IsKeyDown(Keys.Space))
+            {
+                camera_pos.Y += camera_speed;
+            }
 
             //camera_pos = new Vector2(GraphicsDevice.Viewport.Bounds.Center.X, GraphicsDevice.Viewport.Bounds.Center.Y) - tank_pos;
 
             //if(camera_pos.X<
-            if (kbs.IsKeyDown(Keys.Left))
-            {
-                tank_rotation -= turn_speed*2;
-            }
-
-            if (kbs.IsKeyDown(Keys.Right))
-            {
-                tank_rotation += turn_speed * 2;
-            }
-
- 
-            if (kbs.IsKeyDown(Keys.X))
-            {
-                turret_rotation += turn_speed;
-            }
-
-            if (kbs.IsKeyDown(Keys.Z))
-            {
-                turret_rotation -= turn_speed;
-            }
 
             if (kbs.IsKeyDown(Keys.W))
             {
@@ -190,18 +202,35 @@ namespace TankDemo2D_tranformations
                 camera_zoom *= 0.98f;
             }
 
+            if (kbs.IsKeyDown(Keys.Space))
+            {
+                if(oldkbs.IsKeyUp(Keys.Space)){
+                    Bullet b= new Bullet();
+                    b.SpriteBatch = spriteBatch;
+                    b.Image = bullet;
+                   
+                    b.position = tank.position;
+                    b.rotation = tank.rotation+turret.rotation;
+                    bulletList.Add(b);
+                }
+
+               
+            }
+
             //camera_pos = -tank_pos * camera_zoom + screen_centre;
-            camera_pos = -tank_pos;
+            camera_pos = -tank.position;
 
             Vector2 camera_bounds = new Vector2();
-            camera_bounds.X = terrain.Bounds.Center.X - (GraphicsDevice.Viewport.Width/2) / camera_zoom;
-            camera_bounds.Y = terrain.Bounds.Center.Y - (GraphicsDevice.Viewport.Height/2) / camera_zoom;
+            //centre of camera (camera position should stay within these +/- bounds)
+            camera_bounds.X = terrain.Bounds.Width/2 - (GraphicsDevice.Viewport.Width/2) / camera_zoom;
+            camera_bounds.Y = terrain.Bounds.Height/2 - (GraphicsDevice.Viewport.Height/2) / camera_zoom;
 
            
             camera_pos.X = MathHelper.Clamp(camera_pos.X, -camera_bounds.X, +camera_bounds.X);
             camera_pos.Y = MathHelper.Clamp(camera_pos.Y, -camera_bounds.Y, +camera_bounds.Y);
 
 
+            oldkbs = kbs;
             base.Update(gameTime);
         }
 
@@ -213,32 +242,47 @@ namespace TankDemo2D_tranformations
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            Matrix cameraMatrix = Matrix.CreateTranslation(camera_pos.X, camera_pos.Y, 0) * Matrix.CreateScale(camera_zoom) * Matrix.CreateTranslation(screen_centre.X, screen_centre.Y, 0);
+            Matrix cameraMatrix = 
+                Matrix.CreateTranslation(camera_pos.X, camera_pos.Y, 0) * 
+                Matrix.CreateScale(camera_zoom) * 
+                Matrix.CreateTranslation(screen_centre.X, screen_centre.Y, 0);
+
+
+
+
 
             // TODO: Add your drawing code here
-            spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, Matrix.CreateTranslation(terrain_origin) * cameraMatrix);
+            spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, 
+                Matrix.CreateTranslation(terrain_origin) * cameraMatrix);
+            
             //spriteBatch.Draw(tank, Vector2.Zero, Color.White);
             spriteBatch.Draw(terrain, Vector2.Zero, Color.White);
             spriteBatch.End();
 
 
-            Matrix tankMatrix = Matrix.CreateScale(1) * Matrix.CreateRotationZ(tank_rotation) * Matrix.CreateTranslation(tank_pos.X, tank_pos.Y, 0) * cameraMatrix;
-            spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, Matrix.CreateTranslation(tank_origin.X, tank_origin.Y, 0) * tankMatrix);
-            //spriteBatch.Draw(tank, Vector2.Zero, Color.White);
-            spriteBatch.Draw(tank, Vector2.Zero, Color.White);
-            spriteBatch.End();
+            tank.Draw(cameraMatrix);
 
+            
+            turret.Draw(cameraMatrix);
 
-            Matrix turretMatrix = Matrix.CreateTranslation(turret_origin.X, turret_origin.Y, 0) * Matrix.CreateRotationZ(turret_rotation) * tankMatrix;
+            foreach (Enemy e in enemies)
+            {
+                e.Draw(cameraMatrix);
 
-            spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, turretMatrix);
-            spriteBatch.Draw(turret, Vector2.Zero, Color.White);
-            spriteBatch.End();
+            } 
+            
+            foreach (Bullet b in bulletList)
+            {
+                b.Draw(cameraMatrix);
 
+            }
+            
 
             base.Draw(gameTime);
 
         }
+
+      
  
     }
 }
