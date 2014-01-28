@@ -24,7 +24,7 @@ namespace WindowsGame1
 
 
         Matrix world;
-        VertexPositionTexture[] vertices = new VertexPositionTexture[24];
+        VertexPositionNormalTexture[] vertices = new VertexPositionNormalTexture[24];
         BasicEffect basicEffect;
         float angle;
        
@@ -58,7 +58,7 @@ namespace WindowsGame1
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             basicEffect = new BasicEffect(graphics.GraphicsDevice);
-            basicEffect.VertexColorEnabled = true;
+
             basicEffect.View = Matrix.CreateLookAt(new Vector3(0, 0, 200), new Vector3(0, 0, 0), Vector3.Up);
 
             basicEffect.Projection = Matrix.CreatePerspectiveFieldOfView((float)Math.PI / 4.0f,
@@ -86,6 +86,9 @@ namespace WindowsGame1
             vertices[3].Position = new Vector3(100, 0, 0);
             vertices[3].TextureCoordinate = new Vector2(1, 0);
 
+            vertices[0].Normal =vertices[1].Normal=vertices[2].Normal=vertices[3].Normal= new Vector3(0, 0, -1);
+
+
             vertices[4].Position = new Vector3(0, 100, 0);
             vertices[4].TextureCoordinate = new Vector2(0, 1);
 
@@ -97,6 +100,8 @@ namespace WindowsGame1
 
             vertices[7].Position = new Vector3(0, 0, 100);
             vertices[7].TextureCoordinate = new Vector2(1, 0);
+
+            vertices[4].Normal = vertices[5].Normal = vertices[6].Normal = vertices[7].Normal = new Vector3(-1, 0, 0);
 
             vertices[8].Position = new Vector3(100,0, 0);
             vertices[8].TextureCoordinate = new Vector2(0, 1);
@@ -110,7 +115,51 @@ namespace WindowsGame1
             vertices[11].Position = new Vector3(0, 0, 100);
             vertices[11].TextureCoordinate = new Vector2(1, 0);
 
+            vertices[8].Normal = vertices[9].Normal = vertices[10].Normal = vertices[11].Normal = new Vector3(0, -1, 0);
+
            
+            vertices[12].Position = new Vector3(100, 100, 0);
+            vertices[12].TextureCoordinate = new Vector2(0, 1);
+
+            vertices[13].Position = new Vector3(100, 0, 0);
+            vertices[13].TextureCoordinate = new Vector2(0, 0);
+
+            vertices[14].Position = new Vector3(100, 100, 100);
+            vertices[14].TextureCoordinate = new Vector2(1, 1);
+
+            vertices[15].Position = new Vector3(100, 0, 100);
+            vertices[15].TextureCoordinate = new Vector2(1, 0);
+
+            vertices[13].Normal = vertices[14].Normal = vertices[15].Normal = vertices[12].Normal = new Vector3(1, 0, 0);
+
+            vertices[16].Position = new Vector3(100, 100, 0);
+            vertices[16].TextureCoordinate = new Vector2(0, 1);
+
+            vertices[17].Position = new Vector3(0, 100, 0);
+            vertices[17].TextureCoordinate = new Vector2(0, 0);
+
+            vertices[18].Position = new Vector3(100, 100, 100);
+            vertices[18].TextureCoordinate = new Vector2(1, 1);
+
+            vertices[19].Position = new Vector3(0, 100, 100);
+            vertices[19].TextureCoordinate = new Vector2(1, 0);
+
+            vertices[17].Normal = vertices[18].Normal = vertices[19].Normal = vertices[16].Normal = new Vector3(0, 1, 0);
+
+            vertices[20].Position = new Vector3(0, 100, 100);
+            vertices[20].TextureCoordinate = new Vector2(0, 1);
+
+            vertices[21].Position = new Vector3(0, 0, 100);
+            vertices[21].TextureCoordinate = new Vector2(0, 0);
+
+            vertices[22].Position = new Vector3(100, 100, 100);
+            vertices[22].TextureCoordinate = new Vector2(1, 1);
+
+            vertices[23].Position = new Vector3(100, 0, 100);
+            vertices[23].TextureCoordinate = new Vector2(1, 0);
+
+            vertices[20].Normal = vertices[21].Normal = vertices[22].Normal = vertices[23].Normal = new Vector3(0, 0, 1);
+
 
             // TODO: use this.Content to load your game content here
         }
@@ -135,8 +184,8 @@ namespace WindowsGame1
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
-            world = Matrix.CreateTranslation(-50,-50,-50)*Matrix.CreateRotationY(angle) * Matrix.CreateRotationZ(angle * 2.5f) * Matrix.CreateRotationX(angle * 1.5f);
-            angle += 0.00005f;
+            world = Matrix.CreateTranslation(-50,-50,-50)*Matrix.CreateRotationY(angle) * Matrix.CreateRotationZ(angle * 2.5f) * Matrix.CreateRotationX(angle * 1.5f)*Matrix.CreateTranslation(0,0,-200);
+            angle += 0.005f;
             // TODO: Add your update logic here
 
             base.Update(gameTime);
@@ -158,26 +207,34 @@ namespace WindowsGame1
             basicEffect.World = world;
 
             basicEffect.TextureEnabled = true;
- 
-            basicEffect.VertexColorEnabled = false;
+
+            basicEffect.LightingEnabled = true;
+            basicEffect.EnableDefaultLighting();
+            basicEffect.DirectionalLight1.Enabled = false;
+            basicEffect.DirectionalLight2.Enabled = false;
+
+
 
             basicEffect.Texture = image1;
             foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes)
             {
                 pass.Apply();
                 graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, vertices, 0, 2);
+                graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, vertices, 4, 2);
             }
             basicEffect.Texture = image2;
             foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes)
             {
                 pass.Apply();
-                graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, vertices, 4, 2);
+                graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, vertices, 8, 2);
+                graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, vertices, 12, 2);
             }
             basicEffect.Texture = image3;
             foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes)
             {
                 pass.Apply();
-                graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, vertices, 8, 2);
+                graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, vertices, 16, 2);
+                graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, vertices, 20, 2);
             }
  
 
